@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三人美国自驾游 · 记账算账</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --brand:#3b6cf6; --brand2:#7c5cff; --line:#e6e9f0;
+    --green:#16a34a; --red:#e23d3d; --amber:#f59e0b; --chip:#eef2ff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:40px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 14px}
+  header{background:linear-gradient(135deg,#4f46e5,#7c3aed,#a855f7);color:#fff;padding:28px 16px 32px;border-radius:0 0 28px 28px;box-shadow:0 10px 30px rgba(79,70,229,.3);text-align:center}
+  .header-inner{max-width:560px;margin:0 auto}
+  header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.5px;display:inline-flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap}
+  header .subtitle{font-size:13px;opacity:.85;margin-top:6px;font-weight:400}
+  .editname{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:2px 8px;font-size:15px;font-weight:700;min-width:80px;flex-shrink:0}
+  .editname:focus{outline:none;background:rgba(255,255,255,.3)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 2px 10px rgba(20,30,60,.04)}
+  .card h2{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
+  .card h2 .ic{font-size:18px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .field{flex:1;min-width:120px;margin-bottom:10px}
+  .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+  input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fbfcfe;color:var(--ink)}
+  input:focus,select:focus{outline:none;border-color:var(--brand);background:#fff}
+  .del{background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer;padding:4px 6px}
+  .del:hover{color:var(--red)}
+  .ptoggle{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:50%;width:30px;height:30px;font-size:15px;cursor:pointer;flex-shrink:0}
+  .ptoggle.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .btn{border:none;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+  .btn.primary{background:linear-gradient(120deg,var(--brand),var(--brand2));color:#fff}
+  .btn.primary:active{transform:scale(.98)}
+  .btn.ghost{background:var(--chip);color:var(--brand)}
+  .btn.soft{background:#f0f2f7;color:var(--ink)}
+  .btn.block{width:100%}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .btnrow .btn{flex:1;min-width:100px}
+  .seg{display:flex;background:#eef1f7;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:none;background:none;padding:8px;border-radius:8px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer}
+  .seg button.on{background:#fff;color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .parts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .part{display:flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid var(--line);border-radius:20px;font-size:13px;cursor:pointer;background:#fff;user-select:none}
+  .part.on{background:var(--chip);border-color:var(--brand);color:var(--brand);font-weight:600}
+  .part .dot{width:9px;height:9px;border-radius:50%}
+  .dayrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:11px;margin-bottom:6px;background:#fff}
+  .dayrow.off{opacity:.4;border-style:dashed}
+  .dayrow .dname{font-weight:700;font-size:14px;min-width:36px;flex-shrink:0}
+  .dayrow .pdays{width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:14px;text-align:center;flex-shrink:0}
+  .dayrow .ptoggle{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:none;font-size:14px;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0}
+  .dayrow .ptoggle.on{background:var(--brand);border-color:var(--brand)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line)}
+  th{font-size:12px;color:var(--sub);font-weight:600}
+  td.amt{font-weight:700;text-align:right;white-space:nowrap}
+  .tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;background:var(--chip);color:var(--brand)}
+  .tag.days{background:#fff4e0;color:#b9770a}
+  .xbtn{color:var(--sub);cursor:pointer;border:none;background:none;font-size:15px}
+  .xbtn:hover{color:var(--red)}
+  .bal{display:flex;align-items:center;gap:10px;padding:11px;border-radius:12px;margin-bottom:8px;background:#fbfcfe;border:1px solid var(--line)}
+  .bal .av{width:36px;height:36px;border-radius:50%;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .bal .info{flex:1}
+  .bal .info .n{font-weight:600}
+  .bal .info .s{font-size:12px;color:var(--sub)}
+  .bal .val{font-weight:700;font-size:15px;white-space:nowrap;text-align:right}
+  .paid{color:var(--green)} .owed{color:var(--red)}
+  .settle{background:#f0f7f1;border:1px solid #cdebd2;border-radius:12px;padding:12px;margin-top:10px}
+  .settle .li{display:flex;align-items:center;gap:8px;font-size:14px;padding:6px 0}
+  .settle .li b{color:var(--brand)}
+  .empty{text-align:center;color:var(--sub);font-size:13px;padding:18px 0}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:#1f2733;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1}
+  .hint{font-size:12px;color:var(--sub);margin-top:6px;line-height:1.6}
+  .totalbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2733;color:#fff;border-radius:14px;margin:14px 0 0;font-size:14px}
+  .totalbar b{font-size:20px}
+  details{margin-top:10px}
+  summary{cursor:pointer;font-size:13px;color:var(--brand);font-weight:600}
+  .modal{position:fixed;inset:0;background:rgba(20,30,60,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal.show{display:flex}
+  .modal .box{background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%;max-height:82vh;overflow:auto}
+  .modal textarea{width:100%;height:200px;font-size:12px;border:1px solid var(--line);border-radius:9px;padding:8px;font-family:monospace;resize:none}
+  .modal pre{white-space:pre-wrap;font-size:13px;line-height:1.7;max-height:46vh;overflow:auto;background:#f8f9fc;border:1px solid var(--line);border-radius:9px;padding:10px}
+  .foot{text-align:center;font-size:11px;color:var(--sub);margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>🚗 <input class="editname" id="tripName" value="美国自驾游"> 记账本</h1>
+    <div class="subtitle">肉肉 · 王子 · 锤锤</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 记一笔 -->
+  <div class="card">
+    <h2><span class="ic">🧾</span>记一笔</h2>
+    <div class="row">
+      <div class="field" style="flex:1.2">
+        <label>花了多少</label>
+        <div class="row" style="gap:6px;align-items:center;margin:0">
+          <div class="seg" id="curSeg" style="flex:0 0 auto;min-width:82px">
+            <button data-v="USD" class="on">$ 美元</button>
+            <button data-v="CNY">¥ 人民币</button>
+          </div>
+          <input type="number" id="amt" placeholder="0" min="0" step="0.01" style="flex:1">
+        </div>
+      </div>
+      <div class="field" style="flex:1.4">
+        <label>谁付的钱</label>
+        <select id="payer"></select>
+      </div>
+    </div>
+    <div class="field" id="rateField" style="display:none">
+      <label>当日汇率（1 美元 = ？人民币，自动带入上次）</label>
+      <input type="number" id="rate" placeholder="例如 7.2" min="0" step="0.0001">
+      <div class="hint" id="rateHint"></div>
+    </div>
+    <div class="field">
+      <label>花在哪（备注）</label>
+      <input id="desc" placeholder="例如：租车轮子/酒店3晚/牛排大餐/迪士尼门票">
+    </div>
+    <div class="field">
+      <label>快捷分类（点一下自动选好分摊方式）</label>
+      <div class="parts" id="catChips"></div>
+    </div>
+    <div class="field">
+      <label>怎么分摊</label>
+      <div class="seg" id="splitSeg">
+        <button data-v="days" class="on">按天均摊（车/房/油/停车）</button>
+        <button data-v="equal">均摊（吃/票）</button>
+      </div>
+    </div>
+    <div class="field">
+      <label id="partLabel">选谁分摊、各分摊几天（不参加的取消勾选）</label>
+      <div id="partPick"></div>
+    </div>
+    <button class="btn primary block" id="addExp">＋ 记上这笔</button>
+    <button class="btn soft block" id="cancelEdit" style="display:none;margin-top:8px">✕ 取消编辑</button>
+  </div>
+
+  <!-- 总览 -->
+  <div class="totalbar">
+    <span>总花费（人民币）</span>
+    <b id="grandTotal">¥0</b>
+  </div>
+
+  <!-- 明细 -->
+  <div class="card">
+    <h2><span class="ic">📋</span>账目明细</h2>
+    <div id="expTable"></div>
+  </div>
+
+  <!-- 结算 -->
+  <div class="card">
+    <h2><span class="ic">🧮</span>算账 & 该谁给谁</h2>
+    <div class="repay-box" style="background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:600;font-size:14px">💸 中途还款记录</div>
+        <button class="btn ghost" id="addRepay" style="padding:6px 12px;font-size:13px">＋ 记还款</button>
+      </div>
+      <div id="repayForm" style="display:none;margin-bottom:10px">
+        <div class="row">
+          <div class="field" style="flex:1"><label>谁转给谁</label>
+            <div class="row" style="gap:6px;align-items:center;margin:0">
+              <select id="repFrom" style="flex:1"></select>
+              <span style="color:var(--sub)">→</span>
+              <select id="repTo" style="flex:1"></select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1">
+            <label>还款金额</label>
+            <div class="row" style="gap:6px;align-items:center;margin:0">
+              <div class="seg" id="repCurSeg" style="flex:0 0 auto;min-width:82px">
+                <button data-v="CNY" class="on">¥ 人民币</button>
+                <button data-v="USD">$ 美元</button>
+              </div>
+              <input type="number" id="repAmt" min="0" step="0.01" placeholder="0" style="flex:1">
+            </div>
+          </div>
+          <div class="field" style="flex:1.3"><label>备注（选填）</label><input id="repNote" placeholder="例如：微信已转/现金"></div>
+        </div>
+        <div class="field" id="repRateField" style="display:none">
+          <label>当日汇率（1 美元 = ？人民币）</label>
+          <input type="number" id="repRate" placeholder="例如 7.2" min="0" step="0.0001">
+        </div>
+        <div class="btnrow">
+          <button class="btn primary" id="repSave" style="flex:1">💾 保存</button>
+          <button class="btn soft" id="repCancel" style="flex:1">✕ 取消</button>
+        </div>
+      </div>
+      <div id="repayList"></div>
+      <div class="hint">旅途中有人用微信/现金先把钱结清了，记在这里，最后「该谁给谁」会自动扣掉已还的部分。</div>
+    </div>
+    <div id="balances"></div>
+    <div id="settleBox"></div>
+    <details>
+      <summary>查看每笔的分摊明细</summary>
+      <div id="splitDetail" style="margin-top:8px"></div>
+    </details>
+  </div>
+
+  <!-- 数据 / 分享 -->
+  <div class="card">
+    <h2><span class="ic">💾</span>分享 & 合并 & 备份</h2>
+    <p class="hint">你俩各用自己手机记。要合并时：一方点「复制分享链接」发微信，另一方打开链接即自动合并（不会丢各自的账）；或用「导出/导入文件」也行。</p>
+    <div class="btnrow">
+      <button class="btn soft" id="shareLink">🔗 复制分享链接（合并）</button>
+      <button class="btn soft" id="exportBtn">⬇️ 导出文件</button>
+      <button class="btn soft" id="importBtn">⬆️ 导入合并</button>
+      <button class="btn soft" id="perBtn">📤 每人清单</button>
+      <button class="btn soft" id="resetBtn">🗑️ 清空重来</button>
+    </div>
+  </div>
+
+  <div class="foot">三人自驾游记账 · 单文件离线可用 · 数据只存在你手机本地</div>
+</div>
+
+<div class="modal" id="impModal">
+  <div class="box">
+    <h3 style="margin:0 0 10px">粘贴分享链接或数据</h3>
+    <textarea id="impText" placeholder="把朋友发来的链接或文本贴这里"></textarea>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn primary" id="impOk">合并导入</button>
+      <button class="btn soft" id="impCancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="perModal">
+  <div class="box">
+    <h3 style="margin:0 0 10px">每人消费清单</h3>
+    <pre id="perText"></pre>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn primary" id="perCopy">📋 复制</button>
+      <button class="btn soft" id="perDown">⬇️ 下载 .txt</button>
+      <button class="btn soft" id="perClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS=['#3b6cf6','#7c5cff','#16a34a','#f59e0b','#e23d3d','#0ea5e9'];
+function id(){return Math.random().toString(36).slice(2,9)}
+function $(s){return document.querySelector(s)}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800)}
+function fmt(n){const v=Math.round(n*100)/100;return '¥'+(v%1===0?v.toFixed(0):v.toFixed(2));}
+function fusd(n){const v=Math.round(n*100)/100;return '$'+(v%1===0?v.toFixed(0):v.toFixed(2));}
+function toRMB(x){if(x.cur==='CNY')return x.amount;return (x.amount||0)*(x.rate||1);}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function findP(pid){return state.people.find(x=>x.id===pid)}
+function now(){return Date.now()}
+
+const CATS=[{n:'租车',s:'days'},{n:'油费',s:'days'},{n:'酒店',s:'days'},{n:'餐饮',s:'equal'},{n:'门票',s:'equal'},{n:'停车',s:'days'}];
+
+let state=loadLocal()||{tripName:'美国自驾游',totalDays:15,cur:'$',splitType:'days',
+  people:[{id:id(),name:'肉肉'},{id:id(),name:'王子'},{id:id(),name:'锤锤'}],
+  expenses:[],deleted:[],deletedPeople:[],repayments:[]};
+state.cur='$';
+if(!state.splitType)state.splitType='days';
+if(!Array.isArray(state.repayments))state.repayments=[];
+if(state.defaultRate==null)state.defaultRate=7.2;
+if(!state._cur)state._cur='USD';
+// 旧数据兼容：缺币种字段的支出按美元、还款按人民币
+state.expenses.forEach(e=>{if(!e.cur){e.cur='USD';if(e.rate==null)e.rate=state.defaultRate;}});
+state.repayments.forEach(r=>{if(!r.cur)r.cur='CNY';});
+
+/* ---------------- 合并（用于分享链接 / 导入，避免丢账） ---------------- */
+function mergeState(a,b){
+  const del=new Set([...(a.deleted||[]),...(b.deleted||[])]);
+  const delP=new Set([...(a.deletedPeople||[]),...(b.deletedPeople||[])]);
+  const exp=new Map();(a.expenses||[]).forEach(x=>exp.set(x.id,x));(b.expenses||[]).forEach(x=>exp.set(x.id,x));
+  const expenses=[...exp.values()].filter(x=>!del.has(x.id));
+  const p=new Map();(a.people||[]).forEach(x=>p.set(x.id,x));
+  (b.people||[]).forEach(x=>{const ex=p.get(x.id);if(ex){if((x.mtime||0)>=(ex.mtime||0))p.set(x.id,x);}else p.set(x.id,x);});
+  const people=[...p.values()].filter(x=>!delP.has(x.id));
+  const rep=new Map();(a.repayments||[]).forEach(x=>rep.set(x.id,x));(b.repayments||[]).forEach(x=>rep.set(x.id,x));
+  const repayments=[...rep.values()];
+  const out={tripName:b.tripName||a.tripName||'美国自驾游',totalDays:b.totalDays||a.totalDays||15,cur:'$',splitType:b.splitType||a.splitType||'days',people,expenses,deleted:[...del],deletedPeople:[...delP],repayments};
+  return out;
+}
+function saveLocal(){localStorage.setItem('usRoadTripExpense_v3',JSON.stringify(state));}
+function loadLocal(){const s=localStorage.getItem('usRoadTripExpense_v3');if(s){try{return JSON.parse(s);}catch(e){}}return null;}
+
+/* ---------------- 渲染人员（仅名字） ---------------- */
+function renderPeople(){}
+function syncPayer(){const sel=$('#payer');const cur=sel.value;sel.innerHTML=state.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');if(cur&&state.people.some(p=>p.id===cur))sel.value=cur;}
+
+/* ---------------- 参与人选择（随分摊方式切换） ---------------- */
+function renderParts(){
+  const box=$('#partPick');box.innerHTML='';
+  const type=state.splitType;
+  if(type==='equal'){
+    state.people.forEach((p,i)=>{
+      const on=!state._parts||state._parts.includes(p.id);
+      const el=document.createElement('div');el.className='part'+(on?' on':'');
+      el.innerHTML=`<span class="dot" style="background:${COLORS[i%COLORS.length]}"></span>${esc(p.name)}`;
+      el.onclick=()=>{state._parts=state._parts||state.people.map(x=>x.id);if(state._parts.includes(p.id))state._parts=state._parts.filter(x=>x!==p.id);else state._parts.push(p.id);if(state._parts.length===0)state._parts=state.people.map(x=>x.id);renderParts();};
+      box.appendChild(el);
+    });
+  }else{
+    state.people.forEach((p,i)=>{
+      const on=!state._parts||state._parts.includes(p.id);
+      const d=state._days&&state._days[p.id]!=null?state._days[p.id]:state.totalDays;
+      const el=document.createElement('div');el.className='dayrow'+(on?'':' off');
+      el.innerHTML=`<span class="dname" style="color:${COLORS[i%COLORS.length]}">${esc(p.name)}</span><input type="number" min="0" value="${d}" data-id="${p.id}" class="pdays" placeholder="天"><button class="ptoggle ${on?'on':''}" data-id="${p.id}">${on?'✓':''}</button>`;
+      box.appendChild(el);
+    });
+    box.querySelectorAll('.pdays').forEach(inp=>inp.oninput=e=>{const pid=e.target.dataset.id;state._days=state._days||{};state._days[pid]=Math.max(0,+e.target.value||0);});
+    box.querySelectorAll('.ptoggle').forEach(b=>b.onclick=e=>{const pid=e.target.dataset.id;state._parts=state._parts||state.people.map(x=>x.id);if(state._parts.includes(pid)){state._parts=state._parts.filter(x=>x!==pid);}else{state._parts.push(pid);state._days=state._days||{};if(state._days[pid]==null)state._days[pid]=state.totalDays;}if(state._parts.length===0)state._parts=state.people.map(x=>x.id);renderParts();});
+  }
+}
+function renderCats(){
+  const box=$('#catChips');box.innerHTML='';
+  CATS.forEach(c=>{const el=document.createElement('div');el.className='part';el.textContent=c.n;
+    el.onclick=()=>{$('#desc').value=c.n;setSplit(c.s);toast('已选「'+c.n+'」· '+(c.s==='days'?'按天分摊':'均摊'));};
+    box.appendChild(el);});
+}
+function setSplit(v){
+  state.splitType=v;
+  [...$('#splitSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  $('#partLabel').textContent = v==='days' ? '每人填分摊天数，不参与的取消勾选' : '参与分摊的人（有人没去就取消勾选）';
+  if(v==='days'){state._days=state._days||{};state.people.forEach(p=>{if(state._days[p.id]==null)state._days[p.id]=state.totalDays;});}
+  renderParts();
+}
+
+/* ---------------- 记一笔 ---------------- */
+$('#splitSeg').onclick=e=>{if(e.target.dataset.v){setSplit(e.target.dataset.v);}};
+function updateRateField(){
+  const usd=state._cur==='USD';
+  $('#rateField').style.display=usd?'':'none';
+  if(usd){
+    if(!$('#rate').value && state.defaultRate) $('#rate').value=state.defaultRate;
+    const r=parseFloat($('#rate').value)||state.defaultRate||0;
+    const a=parseFloat($('#amt').value)||0;
+    $('#rateHint').textContent = r? `折算约 ${fmt(a*r)}（按 1$=¥${r}）` : '请填当日汇率';
+  }
+}
+$('#curSeg').onclick=e=>{if(e.target.dataset.v){state._cur=e.target.dataset.v;[...$('#curSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===state._cur));updateRateField();}};
+$('#rate').oninput=()=>updateRateField();
+$('#amt').oninput=()=>updateRateField();
+$('#addExp').onclick=()=>{
+  const editing=!!state._editId;
+  const amt=parseFloat($('#amt').value);
+  if(!(amt>0)){toast('先填金额');return;}
+  const cur=state._cur||'USD';
+  let rate=null;
+  if(cur==='USD'){rate=parseFloat($('#rate').value);if(!(rate>0)){toast('美元支出请填当日汇率');return;}state.defaultRate=rate;}
+  const payerId=$('#payer').value;
+  const parts=state._parts&&state._parts.length?state._parts:state.people.map(x=>x.id);
+  if(parts.length===0){toast('至少选一个分摊人');return;}
+  if(editing){
+    const ex=state.expenses.find(x=>x.id===state._editId);
+    if(ex){
+      ex.payerId=payerId;ex.amount=amt;ex.desc=$('#desc').value.trim();ex.split=state.splitType;ex.parts=parts.slice();ex.cur=cur;ex.rate=cur==='USD'?rate:null;
+      if(state.splitType==='days'){ex.days={};parts.forEach(pid=>{ex.days[pid]=state._days&&state._days[pid]!=null?state._days[pid]:state.totalDays;});}else{delete ex.days;}
+    }
+    endEdit();
+  }else{
+    const ex={id:id(),payerId,amount:amt,desc:$('#desc').value.trim(),split:state.splitType,parts,cur,rate:cur==='USD'?rate:null};
+    if(state.splitType==='days'){ex.days={};parts.forEach(pid=>{ex.days[pid]=state._days&&state._days[pid]!=null?state._days[pid]:state.totalDays;});}
+    state.expenses.push(ex);
+  }
+  $('#amt').value='';$('#desc').value='';state._parts=parts.slice();
+  renderParts();renderAll();saveLocal();toast(editing?'已修改 ✅':'记好了 ✅');
+};
+function endEdit(){state._editId=null;$('#addExp').textContent='＋ 记上这笔';$('#cancelEdit').style.display='none';}
+function startEdit(exId){
+  const ex=state.expenses.find(x=>x.id===exId);if(!ex)return;
+  state._editId=exId;
+  $('#amt').value=ex.amount;
+  $('#payer').value=ex.payerId;
+  $('#desc').value=ex.desc||'';
+  state._parts=ex.parts.slice();
+  state._cur=ex.cur||'USD';
+  [...$('#curSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===state._cur));
+  if(state._cur==='USD'){$('#rate').value=ex.rate!=null?ex.rate:'';}
+  updateRateField();
+  if(ex.split==='days'){state._days=Object.assign({},ex.days||{});}
+  setSplit(ex.split);
+  $('#addExp').textContent='💾 保存修改';
+  $('#cancelEdit').style.display='';
+  $('#amt').focus();
+  $('#amt').scrollIntoView({behavior:'smooth',block:'center'});
+  toast('正在修改这笔，改完点「保存修改」');
+}
+$('#cancelEdit').onclick=()=>{endEdit();$('#amt').value='';$('#desc').value='';state._parts=null;state._days={};state._cur=state._cur||'USD';[...$('#curSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===state._cur));updateRateField();setSplit(state.splitType||'days');renderParts();};
+
+/* ---------------- 计算 ---------------- */
+/* 按天分摊（按天均摊）：每天的费用由当天在场的人平摊。
+   约定：每人从其第1天起连续在场 days 天；租车期 = 各人天数的最大值。 */
+function daysShare(ex){
+  const parts=ex.parts;
+  const dOf=pid=>(ex.days&&ex.days[pid]!=null?ex.days[pid]:0);
+  const maxD=Math.max(1,...parts.map(dOf));
+  const daily=toRMB(ex)/maxD;
+  const res={};parts.forEach(pid=>res[pid]=0);
+  for(let d=1;d<=maxD;d++){
+    const present=parts.filter(pid=>dOf(pid)>=d);
+    if(present.length) present.forEach(pid=>res[pid]+=daily/present.length);
+  }
+  return res;
+}
+function calcShares(){
+  const paid={},owed={},repay={};state.people.forEach(p=>{paid[p.id]=0;owed[p.id]=0;repay[p.id]=0;});
+  state.expenses.forEach(ex=>{
+    const rmb=toRMB(ex);
+    paid[ex.payerId]+=rmb;
+    const parts=ex.parts.map(findP).filter(Boolean);
+    if(ex.split==='days'){
+      const sh=daysShare(ex);parts.forEach(p=>owed[p.id]+=sh[p.id]||0);
+    }else{
+      const s=rmb/parts.length;parts.forEach(p=>owed[p.id]+=s);
+    }
+  });
+  (state.repayments||[]).forEach(r=>{const rmb=toRMB(r);if(repay[r.from]!=null)repay[r.from]+=rmb;if(repay[r.to]!=null)repay[r.to]-=rmb;});
+  return {paid,owed,repay};
+}
+function getSettleLines(){
+  const {paid,owed,repay}=calcShares();const cr=[],db=[];
+  state.people.forEach(p=>{const net=paid[p.id]-owed[p.id]+repay[p.id];if(net>0.01)cr.push({p,amt:net});if(net<-0.01)db.push({p,amt:-net});});
+  cr.sort((a,b)=>b.amt-a.amt);db.sort((a,b)=>b.amt-a.amt);
+  const lines=[];let ci=0,di=0;
+  while(ci<cr.length&&di<db.length){const give=Math.min(cr[ci].amt,db[di].amt);lines.push(`<div class="li"><b>${esc(db[di].p.name)}</b> 给 <b>${esc(cr[ci].p.name)}</b> ${fmt(give)}</div>`);cr[ci].amt-=give;db[di].amt-=give;if(cr[ci].amt<0.01)ci++;if(db[di].amt<0.01)di++;}
+  return lines;
+}
+
+/* ---------------- 渲染 ---------------- */
+function renderAll(){renderExpTable();renderBalances();renderParts();renderSplitDetail();renderRepayments();
+  const total=state.expenses.reduce((a,e)=>a+toRMB(e),0);
+  $('#grandTotal').textContent=fmt(total);}
+function renderExpTable(){
+  const box=$('#expTable');
+  if(!state.expenses.length){box.innerHTML='<div class="empty">还没有记账，上面记一笔吧～</div>';return;}
+  let h='<table><thead><tr><th>备注</th><th>付款人</th><th>方式</th><th style="text-align:right">金额</th><th>操作</th></tr></thead><tbody>';
+  state.expenses.slice().reverse().forEach(ex=>{const p=findP(ex.payerId);const editing=state._editId===ex.id;
+    const curTag=ex.cur==='CNY'?'<span class="tag">¥人民币</span>':'<span class="tag days">$美元</span>';
+    const amtCell=ex.cur==='CNY'?fmt(ex.amount):`${fusd(ex.amount)}<br><span style="color:var(--sub);font-size:11px;font-weight:400">×${ex.rate} = ${fmt(toRMB(ex))}</span>`;
+    h+=`<tr style="${editing?'background:#fff8e6':''}"><td>${esc(ex.desc||'—')}</td><td>${esc(p?p.name:'?')}</td><td>${curTag}${ex.split==='days'?'<span class="tag days">按天</span>':'<span class="tag">均摊</span>'}</td><td class="amt">${amtCell}</td><td><button class="xbtn" data-edit="${ex.id}" title="修改">✎</button> <button class="xbtn" data-del="${ex.id}" title="删除">×</button></td></tr>`;});
+  h+='</tbody></table>';box.innerHTML=h;
+  box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>startEdit(b.dataset.edit));
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(confirm('确定删除这笔记录？')){state.deleted.push(b.dataset.del);state.expenses=state.expenses.filter(x=>x.id!==b.dataset.del);renderAll();saveLocal();toast('已删除');}});
+}
+function renderBalances(){
+  const {paid,owed,repay}=calcShares();const box=$('#balances');box.innerHTML='';
+  state.people.forEach((p,i)=>{const net=paid[p.id]-owed[p.id]+repay[p.id];const el=document.createElement('div');el.className='bal';
+    let extra='';const r=repay[p.id];if(Math.abs(r)>0.01){extra=` · 还款${r>0?'付':'收'}${fmt(Math.abs(r))}`;}
+    el.innerHTML=`<div class="av" style="background:${COLORS[i%COLORS.length]}">${p.name[0]||'?'}</div><div class="info"><div class="n">${esc(p.name)}</div><div class="s">已付 ${fmt(paid[p.id])} · 应付 ${fmt(owed[p.id])}${extra}</div></div><div class="val ${net>=0?'paid':'owed'}">${net>=0?'净收':'净付'}<br>${fmt(Math.abs(net))}</div>`;
+    box.appendChild(el);});
+  $('#settleBox').innerHTML=getSettleLines().length?`<div class="settle"><div style="font-weight:600;margin-bottom:4px">💡 最简还钱方案（已扣除已还部分）</div>${getSettleLines().join('')}</div>`:'';
+}
+function renderSplitDetail(){
+  const box=$('#splitDetail');if(!state.expenses.length){box.innerHTML='';return;}
+  let h='';state.expenses.slice().reverse().forEach(ex=>{const parts=ex.parts.map(findP).filter(Boolean);
+    let detail;
+    if(ex.split==='days'){const sh=daysShare(ex);detail=parts.map(p=>`${esc(p.name)} ${fmt(sh[p.id]||0)}（${ex.days&&ex.days[p.id]!=null?ex.days[p.id]:0}天）`).join(' · ');}
+    else{const s=toRMB(ex)/parts.length;detail=parts.map(p=>`${esc(p.name)} ${fmt(s)}`).join(' · ');}
+    const conv=ex.cur==='USD'?`（$ ${ex.amount}×${ex.rate} = ${fmt(toRMB(ex))}）`:'';
+    h+=`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)"><b>${esc(ex.desc||'—')}</b> ${fmt(toRMB(ex))}（${ex.split==='days'?'按天':'均摊'}${conv}）<br><span style="color:var(--sub)">${detail}</span></div>`;});
+  box.innerHTML=h;
+}
+
+/* ---------------- 还款记录 ---------------- */
+function renderRepayments(){
+  const box=$('#repayList');box.innerHTML='';
+  const list=state.repayments||[];
+  if(!list.length){box.innerHTML='<div class="empty" style="padding:8px 0">还没有还款记录</div>';return;}
+  list.slice().reverse().forEach(r=>{const f=findP(r.from),t=findP(r.to);
+    const el=document.createElement('div');el.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px';
+    const rmb=toRMB(r);
+    const amtTxt=r.cur==='USD'?`${fusd(r.amount)}<span style="font-size:11px;color:var(--sub)"> ×${r.rate}=${fmt(rmb)}</span>`:fmt(r.amount);
+    el.innerHTML=`<span>${esc(f?f.name:'?')} → ${esc(t?t.name:'?')}</span><span style="font-weight:700;margin-left:auto">${amtTxt}</span>${r.note?`<span style="color:var(--sub);font-size:12px;margin-left:8px">${esc(r.note)}</span>`:''}<button class="xbtn" data-rdel="${r.id}" title="删除">×</button>`;
+    box.appendChild(el);});
+  box.querySelectorAll('[data-rdel]').forEach(b=>b.onclick=()=>{if(confirm('删除这条还款记录？')){state.repayments=state.repayments.filter(x=>x.id!==b.dataset.rdel);renderAll();saveLocal();toast('已删除');}});
+}
+function fillRepaySelects(){const opt=state.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');$('#repFrom').innerHTML=opt;$('#repTo').innerHTML=opt;if(state.people.length>1)$('#repTo').selectedIndex=1;}
+function repCur(){const b=$('#repCurSeg').querySelector('.on');return b?b.dataset.v:'CNY';}
+$('#repCurSeg').onclick=e=>{if(e.target.dataset.v){const c=e.target.dataset.v;[...$('#repCurSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===c));$('#repRateField').style.display=c==='USD'?'':'none';if(c==='USD'&&!$('#repRate').value&&state.defaultRate)$('#repRate').value=state.defaultRate;}};
+$('#addRepay').onclick=()=>{fillRepaySelects();const f=$('#repayForm');f.style.display=f.style.display==='none'?'block':'none';};
+$('#repCancel').onclick=()=>{$('#repayForm').style.display='none';$('#repAmt').value='';$('#repNote').value='';};
+$('#repSave').onclick=()=>{const amt=parseFloat($('#repAmt').value);if(!(amt>0)){toast('先填金额');return;}
+  const from=$('#repFrom').value,to=$('#repTo').value;if(from===to){toast('转出和收款不能是同一人');return;}
+  const cur=repCur();let rate=null;
+  if(cur==='USD'){rate=parseFloat($('#repRate').value);if(!(rate>0)){toast('美元还款请填汇率');return;}state.defaultRate=rate;}
+  state.repayments=state.repayments||[];state.repayments.push({id:id(),from,to,amount:amt,cur,rate:cur==='USD'?rate:null,note:$('#repNote').value.trim(),time:now()});
+  $('#repayForm').style.display='none';$('#repAmt').value='';$('#repNote').value='';
+  renderAll();saveLocal();toast('还款已记录 ✅');};
+
+/* ---------------- 顶部 & 工具 ---------------- */
+$('#tripName').oninput=e=>{state.tripName=e.target.value;saveLocal();};
+
+$('#shareLink').onclick=()=>{
+  const data=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(state)))));
+  const url=location.origin+location.pathname+'#s='+data;
+  navigator.clipboard.writeText(url).then(()=>toast('链接已复制，发朋友即自动合并 ✅')).catch(()=>prompt('复制此链接发给朋友：',url));
+};
+$('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.tripName||'trip')+'-记账.json';a.click();toast('已导出');};
+$('#importBtn').onclick=()=>$('#impModal').classList.add('show');
+$('#impCancel').onclick=()=>$('#impModal').classList.remove('show');
+$('#impOk').onclick=()=>{let v=$('#impText').value.trim();if(v.startsWith('http')||v.startsWith(location.origin)){const m=v.match(/#s=([^&]+)/);if(m)v=decodeURIComponent(escape(atob(decodeURIComponent(m[1]))));}
+  try{const d=JSON.parse(v);if(d&&d.people){state=mergeState(state,d);saveLocal();renderAll();$('#impModal').classList.remove('show');toast('已合并对方的账 ✅');}}catch(e){toast('数据无法识别');}};
+$('#resetBtn').onclick=()=>{if(confirm('确定清空所有账目？此操作不可撤销')){state.expenses.forEach(e=>state.deleted.push(e.id));state.people.forEach(p=>state.deletedPeople.push(p.id));state.expenses=[];state.people=[];state.repayments=[];renderAll();saveLocal();toast('已清空');}};
+
+/* 每人清单 */
+$('#perBtn').onclick=()=>{
+  const {paid,owed,repay}=calcShares();
+  const total=state.expenses.reduce((a,e)=>a+toRMB(e),0);
+  const lines=[state.tripName+' · 每人消费清单（合计 '+fmt(total)+'）',''];
+  state.people.forEach(p=>{const net=paid[p.id]-owed[p.id]+repay[p.id];const r=repay[p.id];lines.push('· '+p.name+'：已付 '+fmt(paid[p.id])+' ｜ 应付 '+fmt(owed[p.id])+(Math.abs(r)>0.01?' ｜ 还款'+(r>0?'付 ':'收 ')+fmt(Math.abs(r)):'')+' ｜ '+(net>=0?'净收 ':'净付 ')+fmt(Math.abs(net)));});
+  lines.push('','—— 还钱方案 ——');
+  const sl=getSettleLines().map(x=>x.replace(/<[^>]+>/g,'').replace(' 给 ',' → '));
+  lines.push(...(sl.length?sl:['（账目已平，不用还钱）']));
+  const txt=lines.join('\n');$('#perText').textContent=txt;$('#perModal').classList.add('show');
+  $('#perCopy').onclick=()=>navigator.clipboard.writeText(txt).then(()=>toast('已复制')).catch(()=>prompt('复制：',txt));
+  $('#perDown').onclick=()=>{const b=new Blob([txt],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(state.tripName||'trip')+'-每人清单.txt';a.click();};
+  $('#perClose').onclick=()=>$('#perModal').classList.remove('show');
+};
+
+function syncAll(){state._editId=null;state._parts=null;state._days={};state._cur=state._cur||'USD';$('#addExp').textContent='＋ 记上这笔';$('#cancelEdit').style.display='none';$('#tripName').value=state.tripName;syncPayer();renderCats();[...$('#curSeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===state._cur));updateRateField();setSplit(state.splitType||'days');renderAll();}
+
+/* 打开别人发来的分享链接 → 自动合并 */
+if(location.hash.startsWith('#s=')){try{const d=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(location.hash.slice(3))))));state=mergeState(state,d);saveLocal();history.replaceState(null,'',location.pathname);toast('已合并朋友发来的账目 ✅');}catch(e){}}
+
+syncAll();
+</script>
+</body>
+</html>
